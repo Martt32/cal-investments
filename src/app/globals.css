@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.product{
+  transition: all .3s ease-in-out;
+}
+.hero{
+  background: url('./Assets/shopback.webp');
+  background-size: 100vw;
+  background-repeat: no-repeat;
+  background-position: 900;
+}
+.product:hover{
+  scale: 1.05;
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}         
