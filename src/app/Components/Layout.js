@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ShoppingCart } from '@mui/icons-material'
+import { ShoppingCart, Dashboard } from '@mui/icons-material'
 
 const Sidebar = ({ children }) =>{
     return(
@@ -16,10 +16,10 @@ const Sidebar = ({ children }) =>{
                     //Menu
                 }
                 <ul className=' flex space-x-4 text-sm text-orange-500 '>
-                    <Link href='booking' className='flex highlight rounded-lg p-2'>
+                    <Link href='dashboard' className='flex highlight rounded-lg p-2'>
                     <li className='flex justify-center items-center hover:text-orange-800 cursor-pointer space-x-2'>
-                        <ShoppingCart/>
-                        <p>Cart</p>
+                        <Dashboard/>
+                        <p>Dashboard</p>
                     </li>
                     </Link>
                 </ul>
