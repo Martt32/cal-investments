@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 // Define Unsplash Photo Types
@@ -40,7 +40,6 @@ export const fetchPhotos = async (query: string, page: number): Promise<Photo[]>
     }
 
   const data: UnsplashResponse = await response.json();
-  console.log(data.results)
   return data.results;
 };
 
@@ -66,22 +65,21 @@ interface Photo {
 
 const PhotoGallery: React.FC = () => {
   const [query, setQuery] = useState<string>("manchester");
-  const [keyword, setKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("manchester");
   const [page, setPage] = useState(1); // Track the current page
   // const [isFetchingNextPage, setIsFetchingNextPage] = useState(false); // Indicator for suspense
   // using query in place of axios or fetch()
   const { data, refetch, isFetching } = useQuery<UnsplashPhoto[]>({
-    queryKey: ["photos", query],
-    queryFn: async () =>  fetchPhotos(query, page),
-    enabled: !! query, 
+    queryKey: ["photos", keyword],
+    queryFn: async () =>  fetchPhotos(keyword, page),
+    enabled: !! keyword, 
   });
 
-  const loadMore = () => {
-    setPage(page + 1);
-    refetch(); // Fetch new data when page number changes
-  };
-  
-  
+useEffect(()=>{
+  if(query){
+    refetch()
+  }
+},[page])
   
 
   // Handles the search function 
@@ -135,7 +133,7 @@ const PhotoGallery: React.FC = () => {
           <p className="text-2xl mb-10 md:text-gray-200">
             Showing results for{" "}
             <span className="underline decoration-dotted font-[700] capitalize">
-              {query}
+              {keyword}
             </span>
           </p>
 
@@ -167,7 +165,7 @@ const PhotoGallery: React.FC = () => {
 
           <div className="flex flex-col justify-center space-y-10 items-center">
               <button
-                onClick={() => loadMore()}
+                onClick={() => setPage((prev) => prev + 1)}
                 className="bg-white px-2 py-1 border-gray-200 border-[1px] rounded-[5px] font-semibold m-4 mb-10"
               >
                 {isFetching ? "Loading..." : "Load More"}
