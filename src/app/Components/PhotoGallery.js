@@ -57,7 +57,7 @@ const PhotoGallery = () => {
             placeholder="Search for photos..."
             className='p-2 w-full rounded-lg focus:border-blue-500 focus:border-2 border-gray-200 border-[1px]'
             />
-            <button className='bg-blue-600 px-2 pt-1 text-white rounded-lg text-bold' type="submit">Search</button>
+            <button className='bg-blue-600 px-2 py-0 text-white rounded-lg font-semibold' type="submit">Search</button>
           </div>
           </div>
       </form>
@@ -68,9 +68,9 @@ const PhotoGallery = () => {
         <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 '>
 
         {photos.map((photo) => (
-            <div key={photo.id} className='relative w-full bg-gray-100 rounded-lg'>
+            <div key={photo.id} className='relative border-gray-200 border-[1px] w-full bg-gray-100 rounded-lg'>
             <img  src={photo.urls.small} alt={photo.alt_description}  className='w-full h-[208px] rounded-t-lg '/>
-              <p className='shadow-md md:text-gray-200 text-sm absolute bg-gray-100 rounded-full px-2 top-4 right-2'>❤️ {photo.likes}</p>
+              <p className='shadow-md md:text-gray-200 text-[12px] absolute bg-gray-100 rounded-full px-2 py-1 top-4 right-2'>❤️ {photo.likes}</p>
               <div className='flex justify-between items-center p-5'>
                 <img key={photo.id} src={photo.user.profile_image.small} alt={photo.alt_description}  className='w-[28px] h-[28px] rounded-full border-black border-2' />
                 <p className='md:text-gray-200'>{photo.user.username}</p>
@@ -79,9 +79,9 @@ const PhotoGallery = () => {
             
             ))}
         </div>
-        <div className='flex flex-col justify-center items-center p-4'>
-        <button onClick={loadMorePhotos} className='bg-white p-2 border-gray-200 border-[1px] rounded-lg font-semibold mb-10' type="submit">Load More</button>
-        <p className='text-gray-800 text-sm'>© 2025 <span className='font-bold font-pacifico'>PhotoSearch.</span> ❤️ Martins Charles</p>
+        <div className='flex flex-col justify-center space-y-10 items-center '>
+        <button onClick={loadMorePhotos} className='bg-white px-2 py-1 border-gray-200 border-[1px] rounded-[5px] font-semibold m-4 mb-10' type="submit">{loading ? 'Loading...' : 'Load More'}</button>
+        <p className='text-gray-800 text-sm '>© 2025 <span className='font-bold font-pacifico'>PhotoSearch.</span> ❤️ Martins Charles</p>
         </div>
       </div>
     </div>
