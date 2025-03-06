@@ -68,20 +68,17 @@ const PhotoGallery: React.FC = () => {
   const [query, setQuery] = useState<string>("manchester");
   const [keyword, setKeyword] = useState<string>("");
   const [page, setPage] = useState(1); // Track the current page
-  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false); // Indicator for suspense
+  // const [isFetchingNextPage, setIsFetchingNextPage] = useState(false); // Indicator for suspense
   // using query in place of axios or fetch()
-  const { data, refetch } = useQuery<UnsplashPhoto[]>({
+  const { data, refetch, isFetching } = useQuery<UnsplashPhoto[]>({
     queryKey: ["photos", query],
     queryFn: async () =>  fetchPhotos(query, page),
     enabled: !! query, 
   });
 
   const loadMore = () => {
-    console.log('fetching')
-    setIsFetchingNextPage(true)
-    setPage((prevPage) => prevPage + 1);
+    setPage(page + 1);
     refetch(); // Fetch new data when page number changes
-    setIsFetchingNextPage(false)
   };
   
   
@@ -173,7 +170,7 @@ const PhotoGallery: React.FC = () => {
                 onClick={() => loadMore()}
                 className="bg-white px-2 py-1 border-gray-200 border-[1px] rounded-[5px] font-semibold m-4 mb-10"
               >
-                {isFetchingNextPage ? "Loading..." : "Load More"}
+                {isFetching ? "Loading..." : "Load More"}
               </button>
             <p className="text-gray-800 text-sm">
               © 2025 <span className="font-bold font-pacifico">PhotoSearch.</span> ❤️
