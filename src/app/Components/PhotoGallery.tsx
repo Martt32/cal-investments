@@ -17,15 +17,7 @@ interface UnsplashPhoto {
 const UNSPLASH_ACCESS_KEY = "sT3DUBfK-WzMPkyEWCrbzFINbldJ15MyV2nuDvcLh-g";
 const BASE_URL = "https://api.unsplash.com";
 
-// Define types for the response data
-interface Photo {
-  id: string;
-  urls: {
-    small: string;
-    regular: string;
-  };
-  alt_description: string;
-}
+
 
 interface UnsplashResponse {
   results: Photo[];
@@ -50,6 +42,30 @@ export const fetchPhotos = async (query: string, page: number): Promise<Photo[]>
   console.log(data.results)
   return data.results;
 };
+interface UnsplashApiResponse {
+  results: Photo[];
+  total: number;
+  total_pages: number;
+}
+
+export const fetchNewPhotos = async (query: string, page: number): Promise<UnsplashApiResponse> => {
+  const response = await fetch(
+    `${BASE_URL}/search/photos?query=${query}&per_page=16&page=${page}`,
+    {
+      headers: {
+        Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error fetching photos");
+  }
+
+  const data: UnsplashApiResponse = await response.json();
+  return data; // ✅ Returning the full response object
+};
+
 
 interface Photo {
   id: string;
@@ -68,11 +84,7 @@ interface Photo {
 }
 
 
-// Type for unsplash response
-interface UnsplashApiResponse {
-  results: UnsplashPhoto[];
-  total_pages: number;
-}
+
 
 const PhotoGallery: React.FC = () => {
   const [query, setQuery] = useState<string>("manchester");
@@ -85,19 +97,20 @@ const PhotoGallery: React.FC = () => {
     enabled: !! query, 
   });
 
+  const fetchPhotosWithParams = async ({ pageParam = 1 }) => {
+    return await fetchNewPhotos(query, pageParam);
+  };
+  
   const {
     data: morePhotos,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<UnsplashApiResponse>({
-    queryKey: ["photos", query, "infinite"],
-    queryFn:  ({ pageParam = 1 }) => fetchPhotos(query, pageParam),
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.results.length > 0 ? allPages.length + 1 : undefined;
-    },
-    enabled: false,
+    queryKey: ["photos", query],
+    queryFn: fetchPhotosWithParams,
   });
+  
 
   // Handles the search function 
   const handleSearch = async (e?: React.FormEvent) => {
@@ -155,7 +168,7 @@ const PhotoGallery: React.FC = () => {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {data?.map((photo: Photo) => (
+            {data?.map((photo) => (
               <div
                 key={photo.id}
                 className="relative border-gray-200 border-[1px] w-full bg-gray-100 rounded-lg"
