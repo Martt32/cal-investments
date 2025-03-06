@@ -1,4 +1,4 @@
-import PhotoGallery from "./components/PhotoGallery";
+import PhotoGallery from "./Components/PhotoGallery";
 
 export default function Home (){
   return (
