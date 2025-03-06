@@ -25,6 +25,7 @@ interface UnsplashResponse {
 
 // Fetch function
 export const fetchPhotos = async (query: string, page: number): Promise<Photo[]> => {
+  
   const response = await fetch(
     `${BASE_URL}/search/photos?query=${query}&per_page=16&page=${page}`,
     {
@@ -32,38 +33,15 @@ export const fetchPhotos = async (query: string, page: number): Promise<Photo[]>
         Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
       },
     }
-  );
-
-  if (!response.ok) {
-    throw new Error("Error fetching photos");
-  }
+    );
+    
+    if (!response.ok) {
+      throw new Error("Error fetching photos");
+    }
 
   const data: UnsplashResponse = await response.json();
   console.log(data.results)
   return data.results;
-};
-interface UnsplashApiResponse {
-  results: Photo[];
-  total: number;
-  total_pages: number;
-}
-
-export const fetchNewPhotos = async (query: string, page: number): Promise<UnsplashApiResponse> => {
-  const response = await fetch(
-    `${BASE_URL}/search/photos?query=${query}&per_page=16&page=${page}`,
-    {
-      headers: {
-        Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Error fetching photos");
-  }
-
-  const data: UnsplashApiResponse = await response.json();
-  return data; // ✅ Returning the full response object
 };
 
 
@@ -89,27 +67,24 @@ interface Photo {
 const PhotoGallery: React.FC = () => {
   const [query, setQuery] = useState<string>("manchester");
   const [keyword, setKeyword] = useState<string>("");
-
+  const [page, setPage] = useState(1); // Track the current page
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false); // Indicator for suspense
   // using query in place of axios or fetch()
   const { data, refetch } = useQuery<UnsplashPhoto[]>({
     queryKey: ["photos", query],
-    queryFn: async () =>  fetchPhotos(query, 1),
+    queryFn: async () =>  fetchPhotos(query, page),
     enabled: !! query, 
   });
 
-  const fetchPhotosWithParams = async ({ pageParam = 1 }) => {
-    return await fetchNewPhotos(query, pageParam);
+  const loadMore = () => {
+    console.log('fetching')
+    setIsFetchingNextPage(true)
+    setPage((prevPage) => prevPage + 1);
+    refetch(); // Fetch new data when page number changes
+    setIsFetchingNextPage(false)
   };
   
-  const {
-    data: morePhotos,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<UnsplashApiResponse>({
-    queryKey: ["photos", query],
-    queryFn: fetchPhotosWithParams,
-  });
+  
   
 
   // Handles the search function 
@@ -194,14 +169,12 @@ const PhotoGallery: React.FC = () => {
           </div>
 
           <div className="flex flex-col justify-center space-y-10 items-center">
-            {hasNextPage && (
               <button
-                onClick={() => fetchNextPage()}
+                onClick={() => loadMore()}
                 className="bg-white px-2 py-1 border-gray-200 border-[1px] rounded-[5px] font-semibold m-4 mb-10"
               >
                 {isFetchingNextPage ? "Loading..." : "Load More"}
               </button>
-            )}
             <p className="text-gray-800 text-sm">
               © 2025 <span className="font-bold font-pacifico">PhotoSearch.</span> ❤️
               Martins Charles
