@@ -90,11 +90,7 @@ const PhotoGallery: React.FC = () => {
     queryFn: async () =>  fetchPhotos(keyword, page),
     enabled: !! keyword, 
   });
-  // const { data } = useQuery<UnsplashPhoto[]>({
-  //   queryKey: ["photos", keyword, page], // Include page in the queryKey
-  //   queryFn: async () => fetchPhotos(keyword, page),
-  //   enabled: !!keyword, // Ensure it only runs when a keyword is provided
-  // });
+
   
   // useEffect to fetch data when `page` updates
   useEffect(() => {
