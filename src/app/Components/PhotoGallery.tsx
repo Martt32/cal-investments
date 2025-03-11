@@ -23,7 +23,7 @@ interface UnsplashPhoto {
   };
 }
 
-const UNSPLASH_ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_API;
+const UNSPLASH_ACCESS_KEY = 'sT3DUBfK-WzMPkyEWCrbzFINbldJ15MyV2nuDvcLh-g'
 const BASE_URL = "https://api.unsplash.com";
 
 
